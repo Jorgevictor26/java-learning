@@ -145,6 +145,8 @@ nbdist/
 nbactions.xml
 nb-configuration.xml
 /nbproject/
+nbproject/build-impl.xml
+nbproject/genfiles.properties
 
 ##############################
 ## OS X
