@@ -16,7 +16,7 @@ import java.util.Scanner;
  *
  * @author jorge-victor
  */
-public class program {
+public class Program {
 
     public static void main(String[] args) {
         Scanner scan = new Scanner(System.in);
