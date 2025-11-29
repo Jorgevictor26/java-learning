@@ -8,10 +8,9 @@ package model.exceptions;
  *
  * @author jorge-victor
  */
-public class DepositException extends Exception{
+public class BusinessException extends RuntimeException{
 
-    public DepositException(String msg) {
+    public BusinessException(String msg) {
         super(msg);
     }
-    
 }
