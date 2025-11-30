@@ -19,5 +19,6 @@ public class InputUtils {
         } catch (NumberFormatException e) {
             System.out.println("Deve digitar um numero inteiro Valido!");
         }
+        return 1;
     }
 }
