@@ -37,7 +37,7 @@ public class Program {
         file.writeFile(produtos, newFileName);
 
         for (Produto p : produtos) {
-            System.out.println(p.getNomeProduto() + ", " + String.format("%.2f", p.precoTotal()));
+            System.out.println(p.getNomeProduto() + ", " + String.format("%.2f", p.total()));
         }
     }
 }

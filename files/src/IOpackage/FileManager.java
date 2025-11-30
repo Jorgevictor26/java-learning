@@ -56,7 +56,7 @@ public class FileManager {
 
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(fileName))) {
             for (Produto p : produtos) {
-                bw.write(p.getNomeProduto() + "," + String.format("%.2f", p.precoTotal()));
+                bw.write(p.getNomeProduto() + "," + String.format("%.2f", p.total()));
                 bw.newLine();
             }
         } catch (IOException e) {

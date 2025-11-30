@@ -40,7 +40,7 @@ public class Produto {
         return qtidade;
     }
 
-    public double precoTotal() {
+    public double total() {
         return precoUnitario * qtidade;
     }
 }
