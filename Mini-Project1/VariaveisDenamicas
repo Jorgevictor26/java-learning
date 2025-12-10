@@ -1,0 +1,8 @@
+PrecoBase: 1000
+PrecoPorKm: 90
+Oferta: 30
+Demanda: 100
+Hora: 18
+Clima: false
+Evento: false
+distancia: 5
