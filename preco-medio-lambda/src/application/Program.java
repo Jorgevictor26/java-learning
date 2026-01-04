@@ -20,7 +20,6 @@ public class Program {
     public static void main(String[] args) {
 
         List<Product> products = FileManager.readFile();
-
         double average = ProductService.productAverage(products);
 
         List<String> productsName = products.stream()
