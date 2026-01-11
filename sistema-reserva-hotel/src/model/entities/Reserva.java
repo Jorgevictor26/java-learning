@@ -129,6 +129,10 @@ public class Reserva {
     public void addPagamento(Payment pagamento) {
         pagamentos.add(pagamento);
     }
+    
+    public void addServico(ServicoAdicional servico){
+        servicosAdicionais.add(servico);
+    }
 
     public void actualizarDataReserva(LocalDate dataCheckIn, LocalDate dataCheckOut) {
         verificarData(dataCheckIn, dataCheckOut);
@@ -205,15 +209,6 @@ public class Reserva {
         servicosAdicionais.add(servico);
     }
 
-    public void fazerPagamento(double valorPago,
-            LocalDateTime dataPagamento, Metodo metodo,
-            EstadoPagamento estadoPagamento) {
-        Payment pagamento = new Payment(valorPago, dataPagamento, metodo, estadoPagamento
-        );
-
-        pagamentos.add(pagamento);
-    }
-
     public void fazerCheckIn() {
         if (this.estadoReserva == EstadoReserva.CONFIRMADA) {
             this.estadoReserva = EstadoReserva.CHECKED_IN;
@@ -226,7 +221,7 @@ public class Reserva {
         if (this.estadoReserva == EstadoReserva.CHECKED_IN) {
 
             if (getSaldo() > 0) {
-                System.out.println("Aviso: Cliente ainda possui saldo devedor de " + getSaldo());
+                System.out.println("Aviso: Cliente tem divida: " + getSaldo());
             }
 
             this.estadoReserva = EstadoReserva.CHECKED_OUT;
@@ -244,9 +239,13 @@ public class Reserva {
 
     public void cancelar() {
         if (!podeSerCancelada()) {
-            throw new IllegalStateException("Estado inválido para cancelamento");
+            throw new IllegalStateException("Estado invalido para cancelamento");
         }
         this.estadoReserva = EstadoReserva.CANCELADA;
+    }
+
+    public boolean estaTotalmentePago(double valorReserva) {
+        return getTotalPago() >= valorReserva;
     }
 
     @Override

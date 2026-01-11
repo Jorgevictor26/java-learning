@@ -3,8 +3,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package model.entities;
-
-import model.services.*;
 import java.time.LocalDateTime;
 import model.enums.EstadoPagamento;
 import model.enums.Metodo;
@@ -49,5 +47,8 @@ public class Payment {
 
     public Metodo getMetodo() {
         return metodo;
+    }
+        public void confirmar() {
+        this.estadoPagamento = EstadoPagamento.CONFIRMADO;
     }
 }

@@ -20,14 +20,14 @@ public class ReservaManager {
 
     private ArrayList<Reserva> reservas = new ArrayList<>();
 
-    public void criarReserva(int qtidadeHospedes, LocalDate dataCheckIn,
+    public Reserva criarReserva(int qtidadeHospedes, LocalDate dataCheckIn,
             LocalDate dataCheckOut, Cliente cliente, Quarto quarto) {
 
         verificarSobrePosicao(quarto, dataCheckIn, dataCheckOut);
         Reserva reserva = new Reserva(qtidadeHospedes, dataCheckIn, dataCheckOut, cliente, quarto);
 
         addReserva(reserva);
-
+        return reserva;
     }
 
     private void verificarSobrePosicao(Quarto quarto, LocalDate dataCheckIn, LocalDate dataCheckOut) {
@@ -116,6 +116,16 @@ public class ReservaManager {
         reserva.cancelar();
     }
 
+        public void processarCheckOut(int id) {
+        for (Reserva r : reservas) {
+            if (r.getCodigoReserva() == id) {
+                r.fazerCheckIn();
+                return;
+            }
+        }
+        System.out.println("Reserva com ID " + id + " nao encontrada.");
+    }
+        
     public void processarCheckIn(int id) {
         for (Reserva r : reservas) {
             if (r.getCodigoReserva() == id) {
@@ -123,7 +133,23 @@ public class ReservaManager {
                 return;
             }
         }
-        System.out.println("Reserva com ID " + id + " não encontrada.");
+        System.out.println("Reserva com ID " + id + " nao encontrada.");
+    }
+
+    public Reserva buscarReserva(int codigo) {
+        Reserva reserva = null;
+
+        for (Reserva r : reservas) {
+            if (r.getCodigoReserva() == codigo) {
+                reserva = r;
+                break;
+            }
+        }
+
+        if (reserva == null) {
+            System.out.println("Nao encontrada");
+        }
+        return reserva;
     }
 
 }

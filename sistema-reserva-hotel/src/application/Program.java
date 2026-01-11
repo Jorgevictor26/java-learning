@@ -5,16 +5,20 @@
 package application;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Scanner;
 import model.entities.Cliente;
 import model.entities.Payment;
 import model.entities.Quarto;
+import model.entities.Reserva;
+import model.entities.ServicoAdicional;
 import model.enums.Estado;
-import model.enums.EstadoPagamento;
+import model.enums.EstadoReserva;
+import model.enums.FormaCobranca;
 import model.enums.Metodo;
 import model.enums.Tipo;
+import model.enums.TipoServico;
 import model.services.ClienteManager;
+import model.services.PagamentoManager;
 import model.services.QuartoManager;
 import model.services.ReservaManager;
 
@@ -28,6 +32,7 @@ public class Program {
     private static ClienteManager clienteManager = new ClienteManager();
     private static QuartoManager quartoManager = new QuartoManager();
     private static ReservaManager reservaManager = new ReservaManager();
+    private static PagamentoManager pagamentoManager = new PagamentoManager();
 
     public static void main(String[] args) {
 
@@ -43,7 +48,7 @@ public class Program {
             System.out.println("2. Gestao de Clientes");
             System.out.println("3. Gestao de Quartos");
             System.out.println("4. Pagamentos");
-            System.out.println("5. Servicos Adicionais");
+            System.out.println("5. Adicionar Servico");
             System.out.println("6. Check-in");
             System.out.println("7. Check-out");
             System.out.println("0. Sair");
@@ -59,11 +64,13 @@ public class Program {
                 case 3 ->
                     menuGestaoQuartos();
                 case 4 ->
-                    System.out.print("");
+                    Pagamentos();
+                case 5 ->
+                    adicionarServico();
                 case 6 ->
-                    realizarCheckIn();
+                    CheckIn();
                 case 7 ->
-                    realizarCheckOut();
+                    CheckOut();
                 case 0 ->
                     System.out.println("Saindo do sistema...");
                 default ->
@@ -74,7 +81,9 @@ public class Program {
     }
 
     private static void menuGestaoClientes() {
+
         int opcao;
+
         do {
             System.out.println("===== GESTAO DE CLIENTES =====");
             System.out.println("1. Listar Clientes");
@@ -164,19 +173,21 @@ public class Program {
     private static void menuGestaoReservas() {
         int opcao;
         do {
-            System.out.println("===== GESTÃO DE RESERVAS =====");
+            System.out.println("===== GESTAO DE RESERVAS =====");
             System.out.println("1. Criar Reserva");
             System.out.println("2. Listar Reservas");
             System.out.println("3. Cancelar Reserva");
             System.out.println("4. Actualizar Reserva");
             System.out.println("5. Confirmar Reserva");
             System.out.println("0. Voltar");
-            System.out.print("Escolha uma opção: ");
+            System.out.print("Escolha uma opcao: ");
             opcao = scan.nextInt();
             scan.nextLine();
 
             switch (opcao) {
                 case 1 -> {
+                    Reserva reserva = null;
+
                     System.out.print("Nome completo: ");
                     String nome = scan.nextLine();
 
@@ -196,24 +207,51 @@ public class Program {
 
                     quartoManager.listarQuartos();
 
-                    System.out.print("Digite o número do quarto: ");
+                    System.out.print("Digite o numero do quarto: ");
                     int numeroQuarto = scan.nextInt();
                     scan.nextLine();
 
                     Quarto quarto = quartoManager.buscarQuarto(numeroQuarto);
+                    if (quarto != null) {
 
-                    System.out.print("Quantidade de hospedes: ");
-                    int qtde = scan.nextInt();
-                    scan.nextLine();
+                        System.out.print("Quantidade de hospedes: ");
+                        int qtde = scan.nextInt();
+                        scan.nextLine();
 
-                    System.out.print("Data de check-in (AAAA-MM-DD): ");
-                    LocalDate checkIn = LocalDate.parse(scan.nextLine());
+                        System.out.print("Data de check-in (AAAA-MM-DD): ");
+                        LocalDate checkIn = LocalDate.parse(scan.nextLine());
 
-                    System.out.print("Data de check-out (AAAA-MM-DD): ");
-                    LocalDate checkOut = LocalDate.parse(scan.nextLine());
+                        System.out.print("Data de check-out (AAAA-MM-DD): ");
+                        LocalDate checkOut = LocalDate.parse(scan.nextLine());
 
-                    reservaManager.criarReserva(qtde, checkIn, checkOut, client, quarto);
+                        reserva = reservaManager.criarReserva(qtde, checkIn, checkOut, client, quarto);
 
+                    } else {
+                        System.out.println("Quarto nao encontrado!!");
+                    }
+                    System.out.println("Valor total a pagar: " + reserva.getTotalReserva());
+
+                    System.out.print("Pagar? (S/N): ");
+                    String resp = scan.nextLine();
+
+                    if (resp.equalsIgnoreCase("S")) {
+
+                        System.out.print("Valor do pagamento: ");
+                        double valor = scan.nextDouble();
+                        scan.nextLine();
+
+                        System.out.print("Metodo de pagamento (DINHEIRO, TPA, TRANSFERENCIA): ");
+                        Metodo metodo = Metodo.valueOf(scan.nextLine().toUpperCase());
+
+                        pagamentoManager.pagar(reserva, valor, metodo);
+
+                        reservaManager.confirmarReserva(reserva.getCodigoReserva());
+                    } else {
+                        System.out.println("Reserva criada. Pagamento pendente.");
+
+                        Payment pagamento = new Payment();
+                        reserva.addPagamento(pagamento);
+                    }
                 }
                 case 2 ->
                     reservaManager.ImprimirReservas();
@@ -253,11 +291,182 @@ public class Program {
         } while (opcao != 0);
     }
 
-    private static void realizarCheckIn() {
-        System.out.println("Realizar Check-in...");
+    private static void Pagamentos() {
+
+        int op;
+        do {
+            System.out.println("\n===== PAGAMENTOS =====");
+            System.out.println("1 - Registar pagamento");
+            System.out.println("2 - Ver pagamentos de uma reserva");
+            System.out.println("0 - Voltar");
+            System.out.print("Escolha: ");
+
+            op = scan.nextInt();
+            scan.nextLine();
+
+            switch (op) {
+
+                case 1 -> {
+                    System.out.print("Codigo da reserva: ");
+                    int codigo = scan.nextInt();
+                    scan.nextLine();
+
+                    Reserva reserva = reservaManager.buscarReserva(codigo);
+
+                    if (reserva == null) {
+                        System.out.println("Reserva nao encontrada.");
+                        break;
+                    }
+
+                    System.out.println("Total da hospedagem: " + reserva.getValorHospedagem());
+                    System.out.println("Total ja pago: " + reserva.getTotalPago());
+
+                    System.out.print("Valor a pagar: ");
+                    double valor = scan.nextDouble();
+                    scan.nextLine();
+
+                    System.out.println("Metodo:");
+                    System.out.println("1 - DINHEIRO");
+                    System.out.println("2 - CARTAO");
+                    System.out.println("3 - TRANSFERENCIA");
+                    System.out.print("Escolha: ");
+                    int m = scan.nextInt();
+                    scan.nextLine();
+
+                    Metodo metodo = Metodo.values()[m - 1];
+
+                    pagamentoManager.pagar(reserva, valor, metodo);
+
+                    System.out.println("Pagamento registado com sucesso!");
+
+                    if (reserva.estaTotalmentePago(valor)) {
+                        System.out.println("Reserva totalmente paga.");
+                    } else {
+                        System.out.println("Pagamento parcial registado.");
+                    }
+                }
+                case 2 -> {
+                    System.out.print("Codigo da reserva: ");
+                    int codigo = scan.nextInt();
+                    scan.nextLine();
+
+                    Reserva reserva = reservaManager.buscarReserva(codigo);
+
+                    if (reserva == null) {
+                        System.out.println("Reserva nao encontrada.");
+                        break;
+                    }
+
+                    if (reserva.getPagamentos().isEmpty()) {
+                        System.out.println("Esta reserva nao tem pagamentos.");
+                        break;
+                    }
+
+                    System.out.println("\nPagamentos da reserva " + codigo);
+                    for (Payment p : reserva.getPagamentos()) {
+                        System.out.println(p);
+                    }
+
+                    System.out.println("Total pago: " + reserva.getTotalPago());
+                    System.out.println("Total da hospedagem: " + reserva.getValorHospedagem());
+                }
+
+                case 0 ->
+                    System.out.println("Voltando...");
+                default ->
+                    System.out.println("Opcao invalida!");
+            }
+
+        } while (op != 0);
     }
 
-    private static void realizarCheckOut() {
-        System.out.println("Realizar Check-out...");
+    private static void adicionarServico() {
+        System.out.println("Adicionar serviço a uma reserva");
+        System.out.print("Código da reserva: ");
+        int codigo = scan.nextInt();
+        scan.nextLine();
+
+        Reserva reserva = reservaManager.buscarReserva(codigo);
+
+        if (reserva == null) {
+            System.out.println("Reserva não encontrada");
+        } else {
+
+            System.out.print("Preço unitario: ");
+            double preco = scan.nextDouble();
+
+            System.out.print("Quantidade: ");
+            int qtd = scan.nextInt();
+            scan.nextLine();
+
+            TipoServico tipoServico = null;
+            System.out.println("Escolha o Tipo de Serviço:");
+            System.out.println("1 - PEQUENO_ALOMOCO");
+            System.out.println("2 - LAVANDERIA");
+            System.out.println("3 - TRANSPORTE");
+            System.out.println(" 4 - OUTRO");
+            System.out.print("Opção: ");
+            int opTipo = scan.nextInt();
+            scan.nextLine();
+
+            switch (opTipo) {
+                case 1 ->
+                    tipoServico = TipoServico.PEQUENO_ALMOCO;
+                case 2 ->
+                    tipoServico = TipoServico.LAVANDARIA;
+                case 3 ->
+                    tipoServico = TipoServico.TRANSPORTE;
+                case 4 ->
+                    tipoServico = TipoServico.OUTRO;
+                default -> {
+                    System.out.println("Opcao invalida, usando PEQUENO ALMOCO por padrao.");
+                    tipoServico = TipoServico.PEQUENO_ALMOCO;
+                }
+            }
+
+            FormaCobranca formaCobranca = null;
+            System.out.println("Escolha a Forma de Cobrança:");
+            System.out.println("1 - POR_NOITE");
+            System.out.println("2 - FIXO");
+            System.out.println("3- POR_UNIDADE");
+            System.out.print("Opcao: ");
+            int opCobranca = scan.nextInt();
+            scan.nextLine();
+
+            switch (opCobranca) {
+                case 1 ->
+                    formaCobranca = FormaCobranca.POR_NOITE;
+                case 2 ->
+                    formaCobranca = FormaCobranca.FIXO;
+                case 3 ->
+                    formaCobranca = FormaCobranca.POR_UNIDADE;
+                default -> {
+                    System.out.println("Opcao invalida, usando POR_NOITEpor padrao.");
+                    formaCobranca = FormaCobranca.POR_NOITE;
+                }
+            }
+
+            ServicoAdicional s = new ServicoAdicional(qtd, tipoServico, formaCobranca);
+            reserva.addServico(s);
+        }
+
+    }
+
+    private static void CheckIn() {
+
+        System.out.print("Codigo da reserva: ");
+        int codigo = scan.nextInt();
+        scan.nextLine();
+
+        reservaManager.processarCheckIn(codigo);
+
+    }
+
+    private static void CheckOut() {
+        System.out.print("Codigo da reserva: ");
+        int codigo = scan.nextInt();
+        scan.nextLine();
+
+        reservaManager.processarCheckOut(codigo);
     }
 }

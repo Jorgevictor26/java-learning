@@ -28,12 +28,11 @@ public class Program {
             rs = st.executeQuery("select * from department where id>=3");
 
             while (rs.next()) {
-                System.out.println(rs.getInt("Id")+ " " + rs.getString("Name"));
+                System.out.println(rs.getInt("Id") + " " + rs.getString("Name"));
             }
         } catch (SQLException e) {
-//            throw new DbException(e.getMessage());
-            e.printStackTrace();
-        }finally{
+            throw new DbException(e.getMessage());
+        } finally {
             DB.closeConnection();
             DB.closeResultSet(rs);
             DB.closeStatement(st);
