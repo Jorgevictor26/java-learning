@@ -11,9 +11,9 @@ import java.util.ArrayList;
 import model.enums.EstadoPagamento;
 import model.enums.EstadoReserva;
 import model.enums.FormaCobranca;
+import model.enums.Metodo;
 import model.enums.TipoServico;
-import model.exceptions.CapacidadeException;
-import model.exceptions.DataException;
+import model.exceptions.BussinessException;
 
 /**
  *
@@ -125,12 +125,18 @@ public class Reserva {
         this.quarto = quarto;
     }
 
-    public void addPagamento(Payment pagamento) {
-        pagamentos.add(pagamento);
-    }
-    
-    public void addServico(ServicoAdicional servico){
+    public void addServico(ServicoAdicional servico) {
         servicosAdicionais.add(servico);
+    }
+
+    public void registarPagamento(double valor, Metodo metodo) {
+        Payment novoPagamento = new Payment(valor, LocalDateTime.now(), metodo, EstadoPagamento.CONFIRMADO);
+
+        this.pagamentos.add(novoPagamento);
+
+        if (this.getSaldo() <= 0) {
+            this.estadoReserva = EstadoReserva.CONFIRMADA;
+        }
     }
 
     public void actualizarDataReserva(LocalDate dataCheckIn, LocalDate dataCheckOut) {
@@ -139,26 +145,35 @@ public class Reserva {
         setDataCheckOut(dataCheckOut);
     }
 
+    public void addServico(double preco, int quantidade, TipoServico tipo, FormaCobranca formaCobranca) {
+
+        ServicoAdicional servico = new ServicoAdicional(preco, quantidade, tipo, formaCobranca);
+        servicosAdicionais.add(servico);
+    }
+
+    public void fazerCheckIn() {
+        if (this.estadoReserva == EstadoReserva.CONFIRMADA) {
+            this.estadoReserva = EstadoReserva.CHECKED_IN;
+        } else {
+            System.out.println("Error: So pode fazer check-in de reservas CONFIRMADAS.");
+        }
+    }
+
+    public void fazerCheckOut() {
+        if (this.estadoReserva != EstadoReserva.CHECKED_IN) {
+            throw new BussinessException("Deve fazer checkIn");
+        } else {
+            if (getSaldo() > 0) {
+                System.out.println("Aviso: Cliente tem divida: " + getSaldo());
+            }
+
+            this.estadoReserva = EstadoReserva.CHECKED_OUT;
+            System.out.println("Check-out realizado. Quarto liberado.");
+        }
+    }
+
     private long getQtidadeNoites() {
         return ChronoUnit.DAYS.between(dataCheckOut, dataCheckIn);
-    }
-
-    private void verificarData(LocalDate dataCheckIn, LocalDate dataCheckOut) {
-
-        LocalDate dataActual = LocalDate.now();
-
-        if (dataCheckIn.isBefore(dataActual) || dataCheckOut.isBefore(dataActual)) {
-            throw new DataException("A data de reserva invalida, deve ser superior a data actual!!");
-        }
-        if (dataCheckIn.isAfter(dataCheckOut)) {
-            throw new DataException("A data de checkIn deve ser menor que a data de checkout");
-        }
-    }
-
-    private void verificarQtidadeHospedides() {
-        if (getQtidadeHospedes() > quarto.getCapacidade()) {
-            throw new CapacidadeException("Nao pode passar a capacidade maxima!");
-        }
     }
 
     private double getSubTotalHospedam() {
@@ -166,20 +181,22 @@ public class Reserva {
     }
 
     public double getValorHospedagem() {
+        double valor = 0.0;
         switch (quarto.getTipo()) {
             case STANDARD -> {
-                return getSubTotalHospedam() * 1.00;
+                valor = getSubTotalHospedam() * 1.00;
             }
             case DELUXE -> {
-                return getSubTotalHospedam() * 1.15;
+                valor = getSubTotalHospedam() * 1.15;
             }
             case SUITE -> {
-                return getSubTotalHospedam() * 1.30;
+                valor = getSubTotalHospedam() * 1.30;
             }
             default -> {
-                throw new CapacidadeException("Opcao invalida");
+                System.out.println("Opcao Invalida");
             }
         }
+        return valor;
     }
 
     public double getTotalReserva() {
@@ -202,57 +219,42 @@ public class Reserva {
         return getTotalReserva() - getTotalPago();
     }
 
-    public void addServico(int quantidade, TipoServico tipo, FormaCobranca formaCobranca) {
-
-        ServicoAdicional servico = new ServicoAdicional(quantidade, tipo, formaCobranca);
-        servicosAdicionais.add(servico);
-    }
-
-    public void fazerCheckIn() {
-        if (this.estadoReserva == EstadoReserva.CONFIRMADA) {
-            this.estadoReserva = EstadoReserva.CHECKED_IN;
-        } else {
-            System.out.println("Error: So pode fazer check-in de reservas CONFIRMADAS.");
-        }
-    }
-
-    public void fazerCheckOut() {
-        if (this.estadoReserva == EstadoReserva.CHECKED_IN) {
-
-            if (getSaldo() > 0) {
-                System.out.println("Aviso: Cliente tem divida: " + getSaldo());
-            }
-
-            this.estadoReserva = EstadoReserva.CHECKED_OUT;
-            System.out.println("Check-out realizado. Quarto liberado.");
-
-        } else {
-            System.out.println("Erro: ");
-        }
-    }
-
-    public boolean podeSerCancelada() {
-        return estadoReserva == EstadoReserva.CRIADA
-                || estadoReserva == EstadoReserva.CONFIRMADA;
-    }
-
     public void cancelar() {
-        if (!podeSerCancelada()) {
-            throw new IllegalStateException("Estado invalido para cancelamento");
+        if (estadoReserva == EstadoReserva.CRIADA
+                || estadoReserva == EstadoReserva.CONFIRMADA) {
+            throw new BussinessException("Nao pode cancelar\nEstado: " + this.estadoReserva);
         }
         this.estadoReserva = EstadoReserva.CANCELADA;
     }
 
-    public boolean estaTotalmentePago(double valorReserva) {
+    public boolean isTotalmentePago(double valorReserva) {
         return getTotalPago() >= valorReserva;
+    }
+
+    private void verificarData(LocalDate dataCheckIn, LocalDate dataCheckOut) {
+
+        LocalDate dataActual = LocalDate.now();
+
+        if (dataCheckIn.isBefore(dataActual) || dataCheckOut.isBefore(dataActual)) {
+            throw new BussinessException("A data de reserva invalida, deve ser superior a data actual!!");
+        }
+        if (dataCheckIn.isAfter(dataCheckOut)) {
+            throw new BussinessException("A data de checkIn deve ser menor que a data de checkout");
+        }
+    }
+
+    private void verificarQtidadeHospedides() {
+        if (getQtidadeHospedes() > quarto.getCapacidade()) {
+            throw new BussinessException("Nao pode passar a capacidade maxima!");
+        }
     }
 
     @Override
     public String toString() {
-        return "Reserva{" + "CodigoReserva:" + CodigoReserva + ", qtidadeHospedes=" + qtidadeHospedes
+        return "Reserva" + "CodigoReserva:" + CodigoReserva + ", qtidadeHospedes=" + qtidadeHospedes
                 + "" + ", estadoReserva=" + estadoReserva + ", dataCheckIn=" + dataCheckIn + ", dataCheckOut="
                 + dataCheckOut + ", dataCriacao=" + dataCriacao + ", Noites: " + getQtidadeNoites() + ", cliente=" + cliente + ", pagamentos="
-                + pagamentos + ", servicosAdicionais=" + servicosAdicionais + ", quarto=" + quarto + ", quarto=" + quarto + '}';
+                + pagamentos + ", servicosAdicionais=" + servicosAdicionais + ", quartoN=" + quarto + ", quarto=" + quarto;
     }
 
 }

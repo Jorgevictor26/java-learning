@@ -24,9 +24,7 @@ public class ClienteManager {
             System.out.println("Nenhum cliente cadastrado.");
             return;
         }
-        for (Cliente c : clientes) {
-            System.out.println(c);
-        }
+        clientes.forEach(System.out::println);
     }
 
     public void pesquisarCliente(String nome) {
@@ -47,19 +45,16 @@ public class ClienteManager {
         }
     }
 
-    public Cliente consultarCliente(int id) {
-        for (Cliente c : clientes) {
-            if (c.getId() == id) {
-                return c;
-            }
-        }
-        System.out.println("Cliente nao encontrado!");
-        return null;
+    public Cliente consultarCliente(String documento) {
+        return clientes.stream()
+                .filter(c -> c.getDocumento().equalsIgnoreCase(documento))
+                .findFirst()
+                .orElse(null);
     }
 
     // Atualizar cliente
-    public void atualizarCliente(int id, String nome, int telefone, String email, String documento) {
-        Cliente c = consultarCliente(id);
+    public void atualizarCliente(String nome, int telefone, String email, String documento) {
+        Cliente c = consultarCliente(documento);
         if (c != null) {
             c.setNomeCompleto(nome);
             c.setTelefone(telefone);

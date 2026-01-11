@@ -82,6 +82,12 @@ public class Quarto {
         final Quarto other = (Quarto) obj;
         return this.numeroQrt == other.numeroQrt;
     }
+
+    @Override
+    public String toString() {
+        return "Quarto{" + "numeroQrt=" + numeroQrt + ", capacidade=" + capacidade + ", precoDiarioBase=" + precoDiarioBase + ", tipo=" + tipo + ", estado=" + estado + '}';
+    }
+    
     
     
 }

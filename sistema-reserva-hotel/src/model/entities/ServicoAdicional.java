@@ -7,7 +7,7 @@ package model.entities;
 
 import model.enums.FormaCobranca;
 import model.enums.TipoServico;
-import model.exceptions.CapacidadeException;
+import model.exceptions.BussinessException;
 
 /**
  *
@@ -25,7 +25,7 @@ public class ServicoAdicional {
     public ServicoAdicional() {
     }
 
-    public ServicoAdicional(int quantidade, TipoServico tipoServico, FormaCobranca formaCobranca) {
+    public ServicoAdicional(double precoUnitario, int quantidade, TipoServico tipoServico, FormaCobranca formaCobranca) {
         this.quantidade = quantidade;
         this.tipoServico = tipoServico;
         this.formaCobranca = formaCobranca;
@@ -84,7 +84,7 @@ public class ServicoAdicional {
                 return precoUnitario * quantidade;
             }
             default -> {
-                throw new CapacidadeException("Opcao invalida");
+                throw new BussinessException("Opcao invalida");
             }
         }
     }

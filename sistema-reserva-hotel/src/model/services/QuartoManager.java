@@ -22,14 +22,10 @@ public class QuartoManager {
     }
 
     public Quarto buscarQuarto(int numeroQrt) {
-        Quarto quarto = null;
-        for (Quarto q : quartos) {
-            if (q.getNumero() == numeroQrt) {
-                quarto = q;
-                break;
-            }
-        }
-        return quarto;
+
+        return quartos.stream()
+                .filter(q -> q.getNumero() == numeroQrt)
+                .findFirst().orElse(null);
     }
 
     public void listarQuartos() {
@@ -37,20 +33,16 @@ public class QuartoManager {
             System.out.println("Nenhum quarto cadastrado.");
             return;
         }
-        for (Quarto q : quartos) {
-            System.out.println(q);
-        }
+        quartos.forEach(System.out::println);
     }
 
     public void alterarEstado(int numeroQrt, Estado novoEstado) {
-        for (Quarto q : quartos) {
-            if (q.getNumero() == numeroQrt) {
-                q.setEstado(novoEstado);
-                System.out.println("Estado do quarto alterado para: " + novoEstado);
-                return;
-            }
+        Quarto quarto = buscarQuarto(numeroQrt);
+        if (quarto != null) {
+            quarto.setEstado(novoEstado);
+        } else {
+            System.out.println("Quarto nao encontrado!!");
         }
-        System.out.println("Quarto nao encontrado!");
     }
 
     public ArrayList<Quarto> getQuartos() {
