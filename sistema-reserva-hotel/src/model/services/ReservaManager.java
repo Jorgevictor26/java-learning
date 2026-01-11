@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import model.entities.Cliente;
 import model.entities.Quarto;
 import model.entities.Reserva;
+import model.enums.EstadoReserva;
 import model.exceptions.QuartoException;
 
 /**
@@ -69,6 +70,30 @@ public class ReservaManager {
         }
     }
 
+    public void confirmarReserva(int codigoReserva) {
+        Reserva reserva = null;
+
+        for (Reserva r : reservas) {
+            if (r.getCodigoReserva() == codigoReserva) {
+                reserva = r;
+                break;
+            }
+        }
+
+        if (reserva == null) {
+            System.out.println("Reserva nao encontrada!");
+            return;
+        }
+
+        if (reserva.getEstadoReserva() != EstadoReserva.CRIADA) {
+            System.out.println("A reserva nao pode ser confirmada. Estado atual: " + reserva.getEstadoReserva());
+            return;
+        }
+
+        reserva.setEstadoReserva(EstadoReserva.CONFIRMADA);
+        System.out.println("Reserva confirmada com sucesso!");
+    }
+
     public void cancelarReserva(int codigo) {
         Reserva reserva = null;
 
@@ -93,7 +118,7 @@ public class ReservaManager {
 
     public void processarCheckIn(int id) {
         for (Reserva r : reservas) {
-            if (r.getCodigoReserva() == id) { // Encontrou!
+            if (r.getCodigoReserva() == id) {
                 r.fazerCheckIn();
                 return;
             }

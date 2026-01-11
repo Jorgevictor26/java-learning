@@ -32,6 +32,10 @@ public class Quarto {
     public Estado getEstado() {
         return estado;
     }
+    public void setEstado(Estado estado)
+    {
+        this.estado = estado;
+    }
 
     public int getNumero() {
         return numeroQrt;

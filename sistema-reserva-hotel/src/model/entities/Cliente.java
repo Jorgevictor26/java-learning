@@ -61,4 +61,11 @@ public class Cliente {
     public void setNomeCompleto(String nomeCompleto) {
         this.nomeCompleto = nomeCompleto;
     }
+
+    @Override
+    public String toString() {
+        return "Cliente{" + "id=" + id + ", telefone=" + telefone + ", email=" + email + ", nomeCompleto=" + nomeCompleto + ", documento=" + documento + '}';
+    }
+    
+    
 }

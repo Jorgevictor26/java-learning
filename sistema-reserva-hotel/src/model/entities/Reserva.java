@@ -15,8 +15,6 @@ import model.enums.Metodo;
 import model.enums.TipoServico;
 import model.exceptions.CapacidadeException;
 import model.exceptions.DataException;
-import model.services.Payment;
-import model.services.ServicoAdicional;
 
 /**
  *
@@ -70,6 +68,10 @@ public class Reserva {
 
     public EstadoReserva getEstadoReserva() {
         return estadoReserva;
+    }
+
+    public void setEstadoReserva(EstadoReserva estado) {
+        this.estadoReserva = estado;
     }
 
     public LocalDate getDataCheckIn() {
@@ -216,17 +218,15 @@ public class Reserva {
         if (this.estadoReserva == EstadoReserva.CONFIRMADA) {
             this.estadoReserva = EstadoReserva.CHECKED_IN;
         } else {
-            System.out.println("Erro: Só pode fazer check-in de reservas CONFIRMADAS.");
+            System.out.println("Error: So pode fazer check-in de reservas CONFIRMADAS.");
         }
     }
 
     public void fazerCheckOut() {
         if (this.estadoReserva == EstadoReserva.CHECKED_IN) {
 
-            // Opcional: Validar se o saldo está pago antes de sair
             if (getSaldo() > 0) {
                 System.out.println("Aviso: Cliente ainda possui saldo devedor de " + getSaldo());
-                // Aqui você decide se bloqueia o checkout ou apenas avisa
             }
 
             this.estadoReserva = EstadoReserva.CHECKED_OUT;
@@ -240,13 +240,6 @@ public class Reserva {
     public boolean podeSerCancelada() {
         return estadoReserva == EstadoReserva.CRIADA
                 || estadoReserva == EstadoReserva.CONFIRMADA;
-    }
-
-    public void confirmarReserva() {
-        if (this.estadoReserva == EstadoReserva.CRIADA) {
-            this.estadoReserva = EstadoReserva.CONFIRMADA;
-            System.out.println("Reserva confirmada com sucesso!");
-        }
     }
 
     public void cancelar() {
