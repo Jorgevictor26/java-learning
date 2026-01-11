@@ -12,7 +12,6 @@ import model.entities.Quarto;
 import model.entities.Reserva;
 import model.entities.ServicoAdicional;
 import model.enums.Estado;
-import model.enums.EstadoReserva;
 import model.enums.FormaCobranca;
 import model.enums.Metodo;
 import model.enums.Tipo;
@@ -389,7 +388,7 @@ public class Program {
         Reserva reserva = reservaManager.buscarReserva(codigo);
 
         if (reserva == null) {
-            System.out.println("Reserva não encontrada");
+            System.out.println("Reserva nao encontrada");
         } else {
 
             System.out.print("Preço unitario: ");
@@ -405,7 +404,7 @@ public class Program {
             System.out.println("2 - LAVANDERIA");
             System.out.println("3 - TRANSPORTE");
             System.out.println(" 4 - OUTRO");
-            System.out.print("Opção: ");
+            System.out.print("Opcao: ");
             int opTipo = scan.nextInt();
             scan.nextLine();
 
@@ -425,7 +424,7 @@ public class Program {
             }
 
             FormaCobranca formaCobranca = null;
-            System.out.println("Escolha a Forma de Cobrança:");
+            System.out.println("Escolha a Forma de Cobranca:");
             System.out.println("1 - POR_NOITE");
             System.out.println("2 - FIXO");
             System.out.println("3- POR_UNIDADE");

@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import model.enums.EstadoPagamento;
 import model.enums.EstadoReserva;
 import model.enums.FormaCobranca;
-import model.enums.Metodo;
 import model.enums.TipoServico;
 import model.exceptions.CapacidadeException;
 import model.exceptions.DataException;

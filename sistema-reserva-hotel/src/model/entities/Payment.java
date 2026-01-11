@@ -47,8 +47,5 @@ public class Payment {
 
     public Metodo getMetodo() {
         return metodo;
-    }
-        public void confirmar() {
-        this.estadoPagamento = EstadoPagamento.CONFIRMADO;
-    }
+    } 
 }
