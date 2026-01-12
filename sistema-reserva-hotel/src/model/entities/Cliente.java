@@ -13,12 +13,12 @@ public class Cliente {
     private static int idCliente = 1;
 
     private int id;
-    private int telefone;
+    private String telefone;
     private String email;
     private String nomeCompleto;
     private String documento;
 
-    public Cliente(int telefone, String email, String nomeCompleto, String documento) {
+    public Cliente(String telefone, String email, String nomeCompleto, String documento) {
         this.id = idCliente++;
         this.telefone = telefone;
         this.email = email;
@@ -38,11 +38,11 @@ public class Cliente {
         return id;
     }
 
-    public int getTelefone() {
+    public String getTelefone() {
         return telefone;
     }
 
-    public void setTelefone(int telefone) {
+    public void setTelefone(String telefone) {
         this.telefone = telefone;
     }
 

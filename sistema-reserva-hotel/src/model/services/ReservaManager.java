@@ -34,13 +34,7 @@ public class ReservaManager {
         reservas.add(reserva);
     }
 
-    public void actualizarReserva(int codigo, LocalDate dataCheckIn, LocalDate dataCheckOut) {
-
-        Reserva reserva = buscarReserva(codigo);
-        if (reserva == null) {
-            System.out.println("Reserva nao existe!!");
-            return;
-        }
+    public void actualizarReserva(Reserva reserva, LocalDate dataCheckIn, LocalDate dataCheckOut) {
 
         verificarSobrePosicao(reserva.getQuarto(), dataCheckIn, dataCheckOut);
 

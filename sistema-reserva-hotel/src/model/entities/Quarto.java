@@ -21,7 +21,7 @@ public class Quarto {
     private Tipo tipo;
     private Estado estado;
 
-    public Quarto(int numeroQrt, double precoDiarioBase, Tipo tipo, int capacidade, Estado estado) {
+    public Quarto(double precoDiarioBase, Tipo tipo, int capacidade, Estado estado) {
         this.numeroQrt = idQrt++;
         this.precoDiarioBase = precoDiarioBase;
         this.tipo = tipo;

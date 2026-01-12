@@ -38,7 +38,6 @@ public class Reserva {
             LocalDate dataCheckOut, Cliente cliente, Quarto quarto) {
 
         verificarData(dataCheckIn, dataCheckOut);
-        verificarQtidadeHospedides();
 
         this.CodigoReserva = idReserva++;
 
@@ -49,8 +48,10 @@ public class Reserva {
         this.dataCriacao = LocalDateTime.now();
         this.cliente = cliente;
         this.quarto = quarto;
+        verificarQtidadeHospedes();
         pagamentos = new ArrayList<>();
         servicosAdicionais = new ArrayList<>();
+
     }
 
     public int getCodigoReserva() {
@@ -173,7 +174,7 @@ public class Reserva {
     }
 
     private long getQtidadeNoites() {
-        return ChronoUnit.DAYS.between(dataCheckOut, dataCheckIn);
+        return ChronoUnit.DAYS.between(dataCheckIn, dataCheckOut);
     }
 
     private double getSubTotalHospedam() {
@@ -241,9 +242,12 @@ public class Reserva {
         if (dataCheckIn.isAfter(dataCheckOut)) {
             throw new BussinessException("A data de checkIn deve ser menor que a data de checkout");
         }
+        if (getQtidadeNoites() <= 0) {
+            throw new BussinessException("Reserva invalida, deve ficar pelo menos uma noite");
+        }
     }
 
-    private void verificarQtidadeHospedides() {
+    private void verificarQtidadeHospedes() {
         if (getQtidadeHospedes() > quarto.getCapacidade()) {
             throw new BussinessException("Nao pode passar a capacidade maxima!");
         }

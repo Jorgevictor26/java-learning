@@ -27,25 +27,7 @@ public class ClienteManager {
         clientes.forEach(System.out::println);
     }
 
-    public void pesquisarCliente(String nome) {
-        ArrayList<Cliente> encontrados = new ArrayList<>();
-
-        for (Cliente c : clientes) {
-            if (c.getNomeCompleto().toLowerCase().contains(nome.toLowerCase())) {
-                encontrados.add(c);
-            }
-        }
-
-        if (encontrados.isEmpty()) {
-            System.out.println("Nenhum cliente encontrado!");
-        }
-
-        for (Cliente c : encontrados) {
-            System.out.println(c);
-        }
-    }
-
-    public Cliente consultarCliente(String documento) {
+    public Cliente pesquisarCliente(String documento) {
         return clientes.stream()
                 .filter(c -> c.getDocumento().equalsIgnoreCase(documento))
                 .findFirst()
@@ -53,8 +35,8 @@ public class ClienteManager {
     }
 
     // Atualizar cliente
-    public void atualizarCliente(String nome, int telefone, String email, String documento) {
-        Cliente c = consultarCliente(documento);
+    public void atualizarCliente(String nome, String telefone, String email, String documento) {
+        Cliente c = pesquisarCliente(documento);
         if (c != null) {
             c.setNomeCompleto(nome);
             c.setTelefone(telefone);

@@ -5,6 +5,7 @@
 package application;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 import model.entities.Cliente;
@@ -21,6 +22,7 @@ import model.exceptions.BussinessException;
 import model.services.ClienteManager;
 import model.services.QuartoManager;
 import model.services.ReservaManager;
+import utils.DataValidator;
 
 /**
  *
@@ -109,9 +111,14 @@ public class Program {
 
                 case 2 -> {
 
-                    System.out.println("Nome do cliente: ");
+                    System.out.println("Documento: ");
                     String nome = scan.nextLine();
-                    clienteManager.pesquisarCliente(nome);
+                    Cliente cliente = clienteManager.pesquisarCliente(nome);
+                    if (cliente == null) {
+                        System.out.println("Cliente nao encontrado");
+                    } else {
+                        System.out.println(cliente);
+                    }
                 }
                 case 0 ->
                     System.out.println("Voltando!!");
@@ -135,9 +142,7 @@ public class Program {
 
             switch (opcao) {
                 case 1 -> {
-                    System.out.print("Numero do quarto: ");
-                    int numero = scan.nextInt();
-                    scan.nextLine();
+                    System.out.println("===CADASTRAR QUARTO===");
 
                     System.out.print("Preco diario base: ");
                     double preco = scan.nextDouble();
@@ -153,7 +158,7 @@ public class Program {
                     System.out.print("Estado do quarto (ATIVO, MANUTENCAO, INATIVO): ");
                     Estado estado = Estado.valueOf(scan.nextLine().toUpperCase());
 
-                    quartoManager.criarQuarto(new Quarto(numero, preco, tipo, capacidade, estado));
+                    quartoManager.criarQuarto(new Quarto(preco, tipo, capacidade, estado));
                 }
                 case 2 -> {
                     System.out.print("Digite o numero do quarto: ");
@@ -200,13 +205,14 @@ public class Program {
                     String cadastrado = scan.nextLine();
 
                     if (cadastrado.equalsIgnoreCase("S")) {
-                        System.out.print("BI/Passaporte: ");
+                        System.out.print("BI: ");
                         String bi = scan.nextLine();
 
-                        cliente = clienteManager.consultarCliente(bi);
+                        cliente = clienteManager.pesquisarCliente(bi);
 
                         if (cliente == null) {
-                            System.out.println("❌ Cliente nao encontrado.");
+                            System.out.println("❌Cliente nao encontrado.");
+                            return;
                         }
 
                     } else {
@@ -214,64 +220,79 @@ public class Program {
                         String nome = scan.nextLine();
 
                         System.out.print("Telefone: ");
-                        int telefone = scan.nextInt();
-                        scan.nextLine();
+                        String telefone = scan.nextLine();
 
                         System.out.print("Email: ");
                         String email = scan.nextLine();
 
-                        System.out.print("Documento (BI/Passaporte): ");
+                        System.out.print("Documento (BI): ");
                         String doc = scan.nextLine();
 
-                        cliente = new Cliente(telefone, email, nome, doc);
+                        if (!DataValidator.validarEmail(email)) {
+                            System.out.println("Email invalido!");
+                        } else if (!DataValidator.validarBI(doc)) {
+                            System.out.println("BI invalido!");
+                        } else if (!DataValidator.validarTelefone(telefone)) {
+                            System.out.println("Telefone invalido!");
+                        } else {
+                            cliente = new Cliente(telefone, email, nome, doc);
 
-                        clienteManager.addCliente(cliente);
+                            clienteManager.addCliente(cliente);
+                            System.out.println("Cliente cadastrado.");
+                        }
 
                     }
+                    ArrayList<Quarto> quartos = quartoManager.getQuartos();
 
-                    quartoManager.listarQuartos();
+                    if (quartos.isEmpty()) {
+                        System.out.println("Nao tem quarto cadastrado!");
+                    } else {
+                        quartoManager.listarQuartos();
 
-                    System.out.print("Digite o numero do quarto: ");
-                    int numeroQuarto = scan.nextInt();
-                    scan.nextLine();
-
-                    Quarto quarto = quartoManager.buscarQuarto(numeroQuarto);
-                    if (quarto != null) {
-
-                        System.out.print("Quantidade de hospedes: ");
-                        int qtde = scan.nextInt();
+                        System.out.print("Digite o numero do quarto: ");
+                        int numeroQuarto = scan.nextInt();
                         scan.nextLine();
 
-                        System.out.print("Data de check-in (AAAA-MM-DD): ");
-                        LocalDate checkIn = LocalDate.parse(scan.nextLine());
+                        Quarto quarto = quartoManager.buscarQuarto(numeroQuarto);
 
-                        System.out.print("Data de check-out (AAAA-MM-DD): ");
-                        LocalDate checkOut = LocalDate.parse(scan.nextLine());
+                        if (quarto != null) {
 
-                        reserva = reservaManager.criarReserva(qtde, checkIn, checkOut, cliente, quarto);
+                            System.out.print("Quantidade de hospedes: ");
+                            int qtde = scan.nextInt();
+                            scan.nextLine();
 
-                    } else {
-                        System.out.println("Quarto nao encontrado!!");
-                    }
-                    System.out.println("Valor total a pagar: " + reserva.getTotalReserva());
+                            System.out.print("Data de check-in (AAAA-MM-DD): ");
+                            LocalDate checkIn = LocalDate.parse(scan.nextLine());
 
-                    System.out.print("Pagar? (S/N): ");
-                    String resp = scan.nextLine();
+                            System.out.print("Data de check-out (AAAA-MM-DD): ");
+                            LocalDate checkOut = LocalDate.parse(scan.nextLine());
 
-                    if (resp.equalsIgnoreCase("S")) {
+                            reserva = reservaManager.criarReserva(qtde, checkIn, checkOut, cliente, quarto);
+                        } else {
+                            System.out.println("Quarto nao encontrado!!");
+                        }
 
-                        System.out.print("Valor do pagamento: ");
-                        double valor = scan.nextDouble();
-                        scan.nextLine();
+                        System.out.println("Valor total a pagar: " + reserva.getTotalReserva());
 
-                        System.out.print("Metodo de pagamento (DINHEIRO, TPA, TRANSFERENCIA): ");
-                        Metodo metodo = Metodo.valueOf(scan.nextLine().toUpperCase());
-                        reserva.registarPagamento(valor, metodo);
+                        System.out.print("Pagar? (S/N): ");
+                        String resp = scan.nextLine();
 
-                    } else {
-                        System.out.println("Reserva criada. Pagamento pendente.");
+                        if (resp.equalsIgnoreCase("S")) {
+
+                            System.out.print("Valor do pagamento: ");
+                            double valor = scan.nextDouble();
+                            scan.nextLine();
+
+                            System.out.print("Metodo de pagamento (DINHEIRO, TPA, TRANSFERENCIA): ");
+                            Metodo metodo = Metodo.valueOf(scan.nextLine().toUpperCase());
+                            reserva.registarPagamento(valor, metodo);
+
+                        } else {
+                            System.out.println("Reserva criada. Pagamento pendente.");
+                        }
                     }
                 }
+
                 case 2 ->
                     reservaManager.ListarReservas();
                 case 3 -> {
@@ -284,16 +305,21 @@ public class Program {
                 }
                 case 4 -> {
                     System.out.print("Codigo da reserva: ");
-                    int id = scan.nextInt();
+                    int codigo = scan.nextInt();
                     scan.nextLine();
+                    Reserva reserva = reservaManager.buscarReserva(codigo);
+                    if (reserva != null) {
+                        System.out.print("NovaData de check-in (AAAA-MM-DD): ");
+                        LocalDate checkIn = LocalDate.parse(scan.nextLine());
 
-                    System.out.print("NovaData de check-in (AAAA-MM-DD): ");
-                    LocalDate checkIn = LocalDate.parse(scan.nextLine());
+                        System.out.print("NovaData de check-out (AAAA-MM-DD): ");
+                        LocalDate checkOut = LocalDate.parse(scan.nextLine());
 
-                    System.out.print("NovaData de check-out (AAAA-MM-DD): ");
-                    LocalDate checkOut = LocalDate.parse(scan.nextLine());
+                        reservaManager.actualizarReserva(reserva, checkIn, checkOut);
+                    } else {
+                        System.out.println("Reserva nao existe!!");
+                    }
 
-                    reservaManager.actualizarReserva(id, checkIn, checkOut);
                 }
                 case 0 ->
                     System.out.println("Voltando...");
