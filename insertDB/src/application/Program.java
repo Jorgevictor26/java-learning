@@ -45,17 +45,14 @@ public class Program {
 
             if (rowsAffected > 0) {
                 rs = ps.getGeneratedKeys();
-                while(rs.next()){
+                while (rs.next()) {
                     System.out.println("Id criado: " + rs.getInt(1));
                 }
             } else {
                 System.out.println("No rows affected!");
             }
-
             rs = ps.executeQuery("select * "
-                    + "from seller "
-                    + "where "
-                    + "departmentId=3");
+                    + "from seller ");
 
             while (rs.next()) {
                 System.out.println("Id: " + rs.getInt("Id") + ", Nome: " + rs.getString("Name"));
