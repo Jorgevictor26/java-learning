@@ -8,6 +8,7 @@ import java.util.Scanner;
 import model.entities.Account;
 import model.dao.AccountDao;
 import model.dao.DaoFactory;
+import model.exceptions.BusinessException;
 import model.exceptions.DbException;
 
 /**
@@ -47,18 +48,18 @@ public class Program {
 
                         accountDao.insert(account);
 
-                        System.out.println("Account Number " + account.getNumber() + "Created");
+                        System.out.println("Account Number " + account.getNumber() + " created");
 
                     }
 
                     case 2 -> {
-
                         System.out.println("Client Account Number: ");
                         int accountNumber = scan.nextInt();
                         scan.nextLine();
-
+                        
                         Account account = accountDao.findById(accountNumber);
 
+                        
                         if (account == null) {
                             System.out.println("Conta nao encontrada");
                         } else {
@@ -68,6 +69,7 @@ public class Program {
                             account.deposit(amount);
 
                             accountDao.deposit(account.getNumber(), amount);
+                            System.out.println("Donee!!");
                         }
                     }
 
@@ -94,6 +96,8 @@ public class Program {
                         scan.nextLine();
 
                         accountDao.delete(accountNumber);
+
+                        System.out.println("Account deleted successfully!");
                     }
 
                     case 5 -> {
@@ -133,17 +137,18 @@ public class Program {
                             account.setHolder(holder);
 
                             accountDao.updateName(account);
+                            System.out.println("Account Updated");
                         }
                     }
                 }
-            } catch (DbException e) {
+            } catch (DbException | BusinessException e) {
                 System.out.println("Error: " + e.getMessage());
             }
         } while (opcao != 0);
     }
 
     private static void menu() {
-        System.out.println("\n=== SISTEMA BANCARIO ===");
+        System.out.println("\n=== BANK SYSTEM ===");
         System.out.println("1 - Create Account");
         System.out.println("2 - Deposit");
         System.out.println("3 - Search client");

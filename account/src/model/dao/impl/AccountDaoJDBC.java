@@ -67,10 +67,11 @@ public class AccountDaoJDBC implements AccountDao {
 
         try {
             ps = conn.prepareStatement("DELETE FROM Account WHERE Id = ?");
-            rs = ps.executeQuery();
-            if (rs.next()) {
-                System.out.println("Account number: " + rs.getInt(1) + " deleted");
-            } else {
+            ps.setInt(1, id);
+
+            int rowsAffected = ps.executeUpdate();
+
+            if (rowsAffected == 0) {
                 throw new DbException("Id Doesn't exist");
             }
         } catch (SQLException e) {
@@ -91,6 +92,7 @@ public class AccountDaoJDBC implements AccountDao {
                     + "WHERE Id = ?");
 
             ps.setString(1, account.getHolder());
+            ps.setInt(2, account.getNumber());
 
             ps.executeUpdate();
 
@@ -108,8 +110,8 @@ public class AccountDaoJDBC implements AccountDao {
         ResultSet rs = null;
 
         try {
-            ps = conn.prepareStatement("SELECT FROM Account "
-                    + "WHERE Id =  ?");
+            ps = conn.prepareStatement("SELECT * FROM Account "
+                    + "WHERE Id = ?");
 
             ps.setInt(1, id);
 
