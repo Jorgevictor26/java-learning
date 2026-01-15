@@ -4,6 +4,7 @@
  */
 package model.dao;
 
+import db.DB;
 import model.dao.impl.AccountDaoJDBC;
 
 /**
@@ -13,6 +14,6 @@ import model.dao.impl.AccountDaoJDBC;
 public class DaoFactory {
 
     public static AccountDao createAccountDao() {
-        return new AccountDaoJDBC();
+        return new AccountDaoJDBC(DB.getConnection());
     }
 }

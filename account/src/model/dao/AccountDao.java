@@ -15,11 +15,17 @@ public interface AccountDao {
 
     void insert(Account account);
 
-    void update(Account account);
+    void updateName(Account account);
+
+    void deposit(Integer Id, Double amount);
+
+    void withDraw(Integer Id, Double amount);
 
     void delete(Integer id);
 
     Account findById(Integer id);
+
+    ArrayList<Account> findByName(String name);
 
     ArrayList<Account> findAll();
 

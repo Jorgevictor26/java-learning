@@ -5,6 +5,7 @@
 package model.entities;
 
 import java.io.Serializable;
+import java.util.Objects;
 import model.exceptions.BusinessException;
 
 /**
@@ -72,4 +73,38 @@ public class Account implements Serializable {
             throw new BusinessException("The amount exceeds withdraw limit");
         }
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 37 * hash + Objects.hashCode(this.number);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Account other = (Account) obj;
+        return Objects.equals(this.number, other.number);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Account");
+        sb.append("number=").append(number);
+        sb.append(", holder=").append(holder);
+        sb.append(", balance=").append(balance);
+        sb.append(", withdrawLimit=").append(withdrawLimit);
+        return sb.toString();
+    }
+
 }
