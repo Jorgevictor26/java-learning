@@ -6,7 +6,6 @@ package application;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.InputMismatchException;
 import java.util.Scanner;
 import model.entities.Cliente;
 import model.entities.Payment;
@@ -69,6 +68,7 @@ public class Program {
                         Pagamento();
                     case 5 ->
                         adicionarServico();
+                        
                     case 6 ->
                         CheckIn();
                     case 7 ->
@@ -286,6 +286,8 @@ public class Program {
                             System.out.print("Metodo de pagamento (DINHEIRO, TPA, TRANSFERENCIA): ");
                             Metodo metodo = Metodo.valueOf(scan.nextLine().toUpperCase());
                             reserva.registarPagamento(valor, metodo);
+                            System.out.println("Saldo: " + reserva.getSaldo());
+                            System.out.println(reserva);
 
                         } else {
                             System.out.println("Reserva criada. Pagamento pendente.");
@@ -484,6 +486,7 @@ public class Program {
 
             ServicoAdicional s = new ServicoAdicional(preco, qtd, tipoServico, formaCobranca);
             reserva.addServico(s);
+            System.out.println(reserva.getTotalConsumo());
         }
 
     }

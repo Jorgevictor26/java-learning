@@ -85,7 +85,7 @@ public class Quarto {
 
     @Override
     public String toString() {
-        return "Quarto{" + "numeroQrt=" + numeroQrt + ", capacidade=" + capacidade + ", precoDiarioBase=" + precoDiarioBase + ", tipo=" + tipo + ", estado=" + estado + '}';
+        return "Quarto{" + "numeroQrt=" + numeroQrt + ", capacidade=" + capacidade + ", precoDiarioBase= " + precoDiarioBase + ", tipo=" + tipo + ", estado=" + estado + '}';
     }
     
     

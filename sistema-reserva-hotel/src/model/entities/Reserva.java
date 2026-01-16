@@ -38,6 +38,7 @@ public class Reserva {
             LocalDate dataCheckOut, Cliente cliente, Quarto quarto) {
 
         verificarData(dataCheckIn, dataCheckOut);
+        verificarQtidadeHospedes(qtidadeHospedes, quarto);
 
         this.CodigoReserva = idReserva++;
 
@@ -48,7 +49,7 @@ public class Reserva {
         this.dataCriacao = LocalDateTime.now();
         this.cliente = cliente;
         this.quarto = quarto;
-        verificarQtidadeHospedes();
+
         pagamentos = new ArrayList<>();
         servicosAdicionais = new ArrayList<>();
 
@@ -173,16 +174,18 @@ public class Reserva {
         }
     }
 
-    private long getQtidadeNoites() {
+    private long getQtidadeNoites(LocalDate dataCheckIn,
+            LocalDate dataCheckOut) {
         return ChronoUnit.DAYS.between(dataCheckIn, dataCheckOut);
     }
 
     private double getSubTotalHospedam() {
-        return getQtidadeNoites() * quarto.getPrecoDiarioBase();
+        return getQtidadeNoites(dataCheckIn, dataCheckOut) * quarto.getPrecoDiarioBase();
     }
 
     public double getValorHospedagem() {
         double valor = 0.0;
+        
         switch (quarto.getTipo()) {
             case STANDARD -> {
                 valor = getSubTotalHospedam() * 1.00;
@@ -200,12 +203,19 @@ public class Reserva {
         return valor;
     }
 
+    public double getTotalConsumo(){
+        
+        double totalServicos = servicosAdicionais.stream()
+                .mapToDouble(s -> s.getTotalServico(getQtidadeNoites(dataCheckIn, dataCheckOut)))
+                .sum();
+        
+        return totalServicos;
+    }
     public double getTotalReserva() {
 
         double totalServicos = servicosAdicionais.stream()
-                .mapToDouble(s -> s.getTotalServico(getQtidadeNoites()))
+                .mapToDouble(s -> s.getTotalServico(getQtidadeNoites(dataCheckIn, dataCheckOut)))
                 .sum();
-
         return getValorHospedagem() + totalServicos;
     }
 
@@ -222,7 +232,7 @@ public class Reserva {
 
     public void cancelar() {
         if (estadoReserva == EstadoReserva.CRIADA
-                || estadoReserva == EstadoReserva.CONFIRMADA) {
+                || estadoReserva == EstadoReserva.CONFIRMADA || estadoReserva == EstadoReserva.CHECKED_IN) {
             throw new BussinessException("Nao pode cancelar\nEstado: " + this.estadoReserva);
         }
         this.estadoReserva = EstadoReserva.CANCELADA;
@@ -242,13 +252,13 @@ public class Reserva {
         if (dataCheckIn.isAfter(dataCheckOut)) {
             throw new BussinessException("A data de checkIn deve ser menor que a data de checkout");
         }
-        if (getQtidadeNoites() <= 0) {
+        if (getQtidadeNoites(dataCheckIn, dataCheckOut) <= 0) {
             throw new BussinessException("Reserva invalida, deve ficar pelo menos uma noite");
         }
     }
 
-    private void verificarQtidadeHospedes() {
-        if (getQtidadeHospedes() > quarto.getCapacidade()) {
+    private void verificarQtidadeHospedes(int qtidadeHospedes, Quarto quarto) {
+        if (qtidadeHospedes > quarto.getCapacidade()) {
             throw new BussinessException("Nao pode passar a capacidade maxima!");
         }
     }
@@ -257,8 +267,8 @@ public class Reserva {
     public String toString() {
         return "Reserva" + "CodigoReserva:" + CodigoReserva + ", qtidadeHospedes=" + qtidadeHospedes
                 + "" + ", estadoReserva=" + estadoReserva + ", dataCheckIn=" + dataCheckIn + ", dataCheckOut="
-                + dataCheckOut + ", dataCriacao=" + dataCriacao + ", Noites: " + getQtidadeNoites() + ", cliente=" + cliente + ", pagamentos="
-                + pagamentos + ", servicosAdicionais=" + servicosAdicionais + ", quartoN=" + quarto + ", quarto=" + quarto;
+                + dataCheckOut + ", dataCriacao=" + dataCriacao + ", Noites: " + getQtidadeNoites(dataCheckIn, dataCheckOut) + ", cliente=" + cliente + ", pagamentos="
+                + pagamentos + ", servicosAdicionais=" + servicosAdicionais + ", quartoN=" + quarto;
     }
 
 }
