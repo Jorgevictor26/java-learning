@@ -231,8 +231,7 @@ public class Reserva {
     }
 
     public void cancelar() {
-        if (estadoReserva == EstadoReserva.CRIADA
-                || estadoReserva == EstadoReserva.CONFIRMADA || estadoReserva == EstadoReserva.CHECKED_IN) {
+        if (estadoReserva == EstadoReserva.CHECKED_IN || estadoReserva == EstadoReserva.CANCELADA || estadoReserva == EstadoReserva.CHECKED_OUT) {
             throw new BussinessException("Nao pode cancelar\nEstado: " + this.estadoReserva);
         }
         this.estadoReserva = EstadoReserva.CANCELADA;
