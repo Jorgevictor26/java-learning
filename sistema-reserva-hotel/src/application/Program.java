@@ -403,9 +403,10 @@ public class Program {
                     for (Payment p : reserva.getPagamentos()) {
                         System.out.println(p);
                     }
-
-                    System.out.println("Total pago: " + reserva.getTotalPago());
                     System.out.println("Total da hospedagem: " + reserva.getValorHospedagem());
+                    System.out.println("Total pago: " + reserva.getTotalPago());
+                    System.out.println("Falta pagar: " + reserva.getSaldo());
+                    
                 }
 
                 case 0 ->

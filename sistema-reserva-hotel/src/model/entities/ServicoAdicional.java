@@ -4,7 +4,6 @@
  */
 package model.entities;
 
-
 import model.enums.FormaCobranca;
 import model.enums.TipoServico;
 import model.exceptions.BussinessException;
@@ -26,6 +25,7 @@ public class ServicoAdicional {
     }
 
     public ServicoAdicional(double precoUnitario, int quantidade, TipoServico tipoServico, FormaCobranca formaCobranca) {
+        this.precoUnitario = precoUnitario;
         this.quantidade = quantidade;
         this.tipoServico = tipoServico;
         this.formaCobranca = formaCobranca;
@@ -87,6 +87,11 @@ public class ServicoAdicional {
                 throw new BussinessException("Opcao invalida");
             }
         }
+    }
+
+    @Override
+    public String toString() {
+        return "ServicoAdicional{" + "descricao=" + descricao + ", precoUnitario=" + precoUnitario + ", quantidade=" + quantidade + ", tipoServico=" + tipoServico + ", formaCobranca=" + formaCobranca + '}';
     }
 
 }

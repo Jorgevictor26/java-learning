@@ -48,4 +48,11 @@ public class Payment {
     public Metodo getMetodo() {
         return metodo;
     } 
+
+    @Override
+    public String toString() {
+        return "Payment{" + "valorPago=" + valorPago + ", dataPagamento=" + dataPagamento + ", metodo=" + metodo + ", estadoPagamento=" + estadoPagamento + '}';
+    }
+    
+    
 }

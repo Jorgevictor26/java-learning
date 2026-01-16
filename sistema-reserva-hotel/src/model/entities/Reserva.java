@@ -185,7 +185,7 @@ public class Reserva {
 
     public double getValorHospedagem() {
         double valor = 0.0;
-        
+
         switch (quarto.getTipo()) {
             case STANDARD -> {
                 valor = getSubTotalHospedam() * 1.00;
@@ -203,14 +203,15 @@ public class Reserva {
         return valor;
     }
 
-    public double getTotalConsumo(){
-        
+    public double getTotalConsumo() {
+
         double totalServicos = servicosAdicionais.stream()
                 .mapToDouble(s -> s.getTotalServico(getQtidadeNoites(dataCheckIn, dataCheckOut)))
                 .sum();
-        
+
         return totalServicos;
     }
+
     public double getTotalReserva() {
 
         double totalServicos = servicosAdicionais.stream()
@@ -264,10 +265,32 @@ public class Reserva {
 
     @Override
     public String toString() {
-        return "Reserva" + "CodigoReserva:" + CodigoReserva + ", qtidadeHospedes=" + qtidadeHospedes
-                + "" + ", estadoReserva=" + estadoReserva + ", dataCheckIn=" + dataCheckIn + ", dataCheckOut="
-                + dataCheckOut + ", dataCriacao=" + dataCriacao + ", Noites: " + getQtidadeNoites(dataCheckIn, dataCheckOut) + ", cliente=" + cliente + ", pagamentos="
-                + pagamentos + ", servicosAdicionais=" + servicosAdicionais + ", quartoN=" + quarto;
+
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("Codigo da Reserva: ").append(CodigoReserva)
+                .append("\nNumero de Hospedes: ").append(qtidadeHospedes)
+                .append("\nEstado da Reserva: ").append(estadoReserva)
+                .append("\nNoites: ").append(getQtidadeNoites(dataCheckIn, dataCheckOut))
+                .append("\nCliente: ").append(cliente.getNomeCompleto())
+                .append("\nQuarto: ").append(quarto.getNumero())
+                .append(" (").append(quarto.getTipo()).append(")\n");
+
+        sb.append("\n--- Pagamentos ---\n");
+        if (pagamentos.isEmpty()) {
+            sb.append("\nNenhum pagamento registado.");
+        } else {
+            pagamentos.forEach(p -> sb.append(p));
+        }
+
+        sb.append("\n--- Servicos Adicionais ---\n");
+        if (servicosAdicionais.isEmpty()) {
+            sb.append("\nNenhum servico adicional.");
+        } else {
+            servicosAdicionais.forEach(s -> sb.append(s));
+        }
+
+        return sb.toString();
     }
 
 }
