@@ -14,6 +14,7 @@ import model.exceptions.BussinessException;
  */
 public class ServicoAdicional {
 
+    private Integer id;
     private String descricao;
     private double precoUnitario;
     private int quantidade;
@@ -24,7 +25,8 @@ public class ServicoAdicional {
     public ServicoAdicional() {
     }
 
-    public ServicoAdicional(double precoUnitario, int quantidade, TipoServico tipoServico, FormaCobranca formaCobranca) {
+    public ServicoAdicional(Integer id, double precoUnitario, int quantidade, TipoServico tipoServico, FormaCobranca formaCobranca) {
+        this.id = id;
         this.precoUnitario = precoUnitario;
         this.quantidade = quantidade;
         this.tipoServico = tipoServico;

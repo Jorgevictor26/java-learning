@@ -21,9 +21,8 @@ import model.exceptions.BussinessException;
  */
 public class Reserva {
 
-    private static int idReserva = 1;
 
-    private int CodigoReserva;
+    private Integer CodigoReserva;
     private int qtidadeHospedes;
     private EstadoReserva estadoReserva;
     private LocalDate dataCheckIn;
@@ -34,13 +33,13 @@ public class Reserva {
     private ArrayList<Payment> pagamentos;
     private ArrayList<ServicoAdicional> servicosAdicionais;
 
-    public Reserva(int qtidadeHospedes, LocalDate dataCheckIn,
+    public Reserva(Integer codigoReserva, int qtidadeHospedes, LocalDate dataCheckIn,
             LocalDate dataCheckOut, Cliente cliente, Quarto quarto) {
 
         verificarData(dataCheckIn, dataCheckOut);
         verificarQtidadeHospedes(qtidadeHospedes, quarto);
 
-        this.CodigoReserva = idReserva++;
+        this.CodigoReserva = codigoReserva;
 
         this.qtidadeHospedes = qtidadeHospedes;
         this.estadoReserva = EstadoReserva.CRIADA;
@@ -57,6 +56,10 @@ public class Reserva {
 
     public int getCodigoReserva() {
         return CodigoReserva;
+    }
+    
+    public void setCodigoReserva(Integer codigo){
+        this.CodigoReserva = codigo;
     }
 
     public int getQtidadeHospedes() {
@@ -132,7 +135,7 @@ public class Reserva {
     }
 
     public void registarPagamento(double valor, Metodo metodo) {
-        Payment novoPagamento = new Payment(valor, LocalDateTime.now(), metodo, EstadoPagamento.CONFIRMADO);
+        Payment novoPagamento = new Payment(null,valor, LocalDateTime.now(), metodo, EstadoPagamento.CONFIRMADO);
 
         this.pagamentos.add(novoPagamento);
 
@@ -149,7 +152,7 @@ public class Reserva {
 
     public void addServico(double preco, int quantidade, TipoServico tipo, FormaCobranca formaCobranca) {
 
-        ServicoAdicional servico = new ServicoAdicional(preco, quantidade, tipo, formaCobranca);
+        ServicoAdicional servico = new ServicoAdicional(null, preco, quantidade, tipo, formaCobranca);
         servicosAdicionais.add(servico);
     }
 

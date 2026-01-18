@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package model.entities;
+
 import java.time.LocalDateTime;
 import model.enums.EstadoPagamento;
 import model.enums.Metodo;
@@ -13,12 +14,14 @@ import model.enums.Metodo;
  */
 public class Payment {
 
+    private Integer id;
     private double valorPago;
     private LocalDateTime dataPagamento;
     private Metodo metodo;
     private EstadoPagamento estadoPagamento;
 
-    public Payment(double valorPago, LocalDateTime dataPagamento, Metodo metodo, EstadoPagamento estadoPagamento) {
+    public Payment(Integer id, double valorPago, LocalDateTime dataPagamento, Metodo metodo, EstadoPagamento estadoPagamento) {
+        this.id = id;
         this.valorPago = valorPago;
         this.dataPagamento = dataPagamento;
         this.metodo = metodo;
@@ -47,12 +50,19 @@ public class Payment {
 
     public Metodo getMetodo() {
         return metodo;
-    } 
+    }
 
     @Override
     public String toString() {
         return "Payment{" + "valorPago=" + valorPago + ", dataPagamento=" + dataPagamento + ", metodo=" + metodo + ", estadoPagamento=" + estadoPagamento + '}';
     }
-    
-    
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
 }

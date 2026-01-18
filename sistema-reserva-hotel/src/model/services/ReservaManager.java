@@ -24,7 +24,7 @@ public class ReservaManager {
 
         verificarSobrePosicao(quarto, dataCheckIn, dataCheckOut);
 
-        Reserva reserva = new Reserva(qtidadeHospedes, dataCheckIn, dataCheckOut, cliente, quarto);
+        Reserva reserva = new Reserva(null,qtidadeHospedes, dataCheckIn, dataCheckOut, cliente, quarto);
 
         addReserva(reserva);
         return reserva;

@@ -158,7 +158,7 @@ public class Program {
                     System.out.print("Estado do quarto (ATIVO, MANUTENCAO, INATIVO): ");
                     Estado estado = Estado.valueOf(scan.nextLine().toUpperCase());
 
-                    quartoManager.criarQuarto(new Quarto(preco, tipo, capacidade, estado));
+                    quartoManager.criarQuarto(new Quarto(null,preco, tipo, capacidade, estado));
                 }
                 case 2 -> {
                     System.out.print("Digite o numero do quarto: ");
@@ -235,7 +235,7 @@ public class Program {
                         } else if (!DataValidator.validarTelefone(telefone)) {
                             System.out.println("Telefone invalido!");
                         } else {
-                            cliente = new Cliente(telefone, email, nome, doc);
+                            cliente = new Cliente(null, telefone, email, nome, doc);
 
                             clienteManager.addCliente(cliente);
                             System.out.println("Cliente cadastrado.");
@@ -485,7 +485,7 @@ public class Program {
                 }
             }
 
-            ServicoAdicional s = new ServicoAdicional(preco, qtd, tipoServico, formaCobranca);
+            ServicoAdicional s = new ServicoAdicional(null, preco, qtd, tipoServico, formaCobranca);
             reserva.addServico(s);
             System.out.println(reserva.getTotalConsumo());
         }

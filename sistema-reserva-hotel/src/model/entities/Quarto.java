@@ -12,17 +12,18 @@ import model.enums.Tipo;
  * @author jorge-victor
  */
 public class Quarto {
-
-    private static int idQrt = 100;
-
-    private int numeroQrt;
-    private int capacidade;
+    
+    private Integer numeroQrt;
+    private Integer capacidade;
     private double precoDiarioBase;
     private Tipo tipo;
     private Estado estado;
 
-    public Quarto(double precoDiarioBase, Tipo tipo, int capacidade, Estado estado) {
-        this.numeroQrt = idQrt++;
+    public Quarto() {
+    }
+    
+    public Quarto(Integer numqrt,double precoDiarioBase, Tipo tipo, int capacidade, Estado estado) {
+        this.numeroQrt = numqrt;
         this.precoDiarioBase = precoDiarioBase;
         this.tipo = tipo;
         this.capacidade = capacidade;

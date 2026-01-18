@@ -10,16 +10,17 @@ package model.entities;
  */
 public class Cliente {
 
-    private static int idCliente = 1;
-
-    private int id;
+    private Integer id;
     private String telefone;
     private String email;
     private String nomeCompleto;
     private String documento;
 
-    public Cliente(String telefone, String email, String nomeCompleto, String documento) {
-        this.id = idCliente++;
+    public Cliente() {
+    }
+
+    public Cliente(Integer id, String telefone, String email, String nomeCompleto, String documento) {
+        this.id = id;
         this.telefone = telefone;
         this.email = email;
         this.nomeCompleto = nomeCompleto;
@@ -34,8 +35,12 @@ public class Cliente {
         this.documento = documento;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getTelefone() {
